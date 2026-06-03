@@ -2,22 +2,25 @@ server:
   port: 8080
 
 spring:
-  application:
-    name: user-service-pro
-  profiles:
-    active: dev
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: Asia/Shanghai
-    default-property-inclusion: non_null
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: root
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: false
 
-mybatis-plus:
+mybatis:
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
-  global-config:
-    db-config:
-      id-type: auto
-      logic-delete-field: deleted
-      logic-delete-value: 1
-      logic-not-delete-value: 0
+
+logging:
+  level:
+    com.example.demo: DEBUG
