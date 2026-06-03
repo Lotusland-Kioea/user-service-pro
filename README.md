@@ -40,8 +40,8 @@
 | Java | `D:\Develop\Java\jdk-26.0.1+8` | OpenJDK 26 |
 | Maven | `D:\Develop\Maven` | — |
 | Node.js | `D:\Develop\Nodejs` | v24.16.0 |
-| MySQL | `D:\Develop\MySQL` | root / **** / mydb |
-| Redis | `D:\Develop\Redis` | localhost:6379 |
+| MySQL | `D:\Develop\MySQL` | 8.x |
+| Redis | `D:\Develop\Redis` | 5.0.14 (Windows) |
 | IntelliJ IDEA | `D:\Develop\JetBrains\IntelliJ IDEA` | — |
 | VS Code | `D:\Develop\Microsoft VS Code` | — |
 
@@ -154,7 +154,7 @@ mvn clean test
 ### 前端
 
 ```bash
-cd user-service-pro/frontend
+cd frontend
 npm install       # 仅首次
 npm run dev       # → http://localhost:5173
 ```
@@ -218,7 +218,7 @@ npm run dev       # → http://localhost:5173
 | 响应 | 裸 JSON | 统一 `ApiResponse<T>` 包装 |
 | 异常 | 500 + 堆栈 | `@RestControllerAdvice` + 动态 HTTP 状态码 |
 | 日志 | `System.out.println` | SLF4J 全覆盖 |
-| 缓存 | `activateDefaultTyping` 安全隐患 | 安全序列化 + 精确驱逐 + 写入预热 |
+| 缓存 | 忘记调用 `activateDefaultTyping`，反序列化类型丢失 | 已修复类型丢失 + 精确驱逐 + 写入预热 |
 | 测试 | 0 | **15 个**（7 单测 + 8 集成测试） |
 | 配置 | 密码明文硬编码 | 环境变量 + 多环境 yml |
 | 前端 | 无 | Vue 3 + Element Plus |
@@ -242,7 +242,7 @@ npm run dev       # → http://localhost:5173
 **2026-06-03 21:30 ~ 21:46**
 
 - 3 个 Subagent 并行开发：基础类层 → 业务逻辑层 → Web 配置层
-- 17 个 Java 源文件 + 2 个 yml 配置文件一次性生成
+- 16 个 Java 源文件 + 2 个 yml 配置文件一次性生成
 - 补充 MyBatis-Plus 分页插件和自动填充处理器
 - 修复 MyBatis-Plus 3.5.9 → 3.5.7 版本兼容问题（`PaginationInnerInterceptor` 在新版被移除）
 - `mvn clean test` → **15/15 通过**
@@ -256,15 +256,7 @@ npm run dev       # → http://localhost:5173
 - axios 封装 + 响应拦截器 + Vite 代理
 - `npm run build` 构建验证通过
 
-### 阶段四：运行验证
-
-**2026-06-03 22:13 ~ 22:15**
-
-- MySQL 表结构更新（新增 `updated_at` 和 `deleted` 字段）
-- Redis `stop-writes-on-bgsave-error` 修复
-- 后端 + 前端同时启动，curl 测试 CRUD 全流程通过
-
-### 阶段五：Code Review
+### 阶段四：Code Review
 
 **2026-06-03 21:56 ~ 22:10**
 
@@ -285,13 +277,21 @@ npm run dev       # → http://localhost:5173
 | 🟡 应该修复 | 4 | BusinessException HTTP 状态码、缓存名硬编码、create 不预热缓存、死配置 |
 | 🟢 可以优化 | 5 | 死代码清理、依赖冗余、SQL 日志重复、null 守卫 |
 
-### 阶段六：修复与验证
+### 阶段五：修复与验证
 
 **2026-06-03 22:10 ~ 22:12**
 
 - 4 个 Subagent 并行修复（6 个文件同时改）
 - Test 适配（`ResponseEntity` 动态 HTTP 状态码 → 测试从 `isOk()` 改为 `isNotFound()`）
 - `mvn clean test` → **15/15 通过，BUILD SUCCESS**
+
+### 阶段六：运行验证
+
+**2026-06-03 22:13 ~ 22:15**
+
+- MySQL 表结构更新（新增 `updated_at` 和 `deleted` 字段）
+- Redis `stop-writes-on-bgsave-error` 修复
+- 后端 + 前端同时启动，curl 测试 CRUD 全流程通过
 
 ---
 
