@@ -1,12 +1,15 @@
 # user-service-pro
 
-基于 Spring Boot 3.4.5 + MyBatis-Plus + Redis + Vue 3 的用户管理服务，从极简 Demo 重构为工程化脚手架。
+Spring Boot 3.4.5 + MyBatis-Plus + Redis + Vue 3 用户管理服务，采用 Git Tag 版本管理，持续迭代。
+
+> 当前最新版本：[v1.0.0](https://github.com/Lotusland-Kioea/user-service-pro/releases/tag/v1.0.0)  
+> 查看历史版本：`git checkout v0.1.0`
 
 ---
 
-## 开发背景
+## 项目定位
 
-本项目是 **AI 辅助编程（AICoding）学习实践**，从一个仅 6 个 Java 文件、200 行代码的 Spring Boot 极简 Demo 出发，通过 Claude Code 的 subagent 并行开发、Plan 模式设计、Code Review 审查等技能，完成了一次完整的"规范化 → 可视化 → 审查修复"迭代流程。
+本项目是 **AI 辅助编程（AICoding）学习实践**，通过 Claude Code 的 Plan / Subagent / Code Review 等技能，从零搭建一个可演进的 Spring Boot 工程脚手架。每个版本通过 Git Tag 归档，可独立检出运行。
 
 ### 学习目标
 
@@ -14,7 +17,7 @@
 - 跑通单机 MySQL + Redis 缓存，理解 MyBatis-Plus 的 ORM 能力
 - 搭建 Vue 3 + Element Plus 前端，实现前后端联调
 - 熟悉 Claude Code 开发流程：Plan（方案设计）→ Subagent（并行开发）→ Code Review（审查修复）
-- 体验从 Demo 到可交付项目的完整重构过程
+- 实践 Git 版本管理：Tag 归档、多版本共存、云端备份
 
 ---
 
@@ -201,32 +204,62 @@ npm run dev       # → http://localhost:5173
 
 ## 版本记录
 
-| 版本 | Tag | 说明 |
-|---|---|---|
-| **v0.1.0** | `git checkout v0.1.0` | 原始 Demo：Spring Boot + MyBatis + MySQL + Redis，2 个 API（POST/GET），6 个 Java 文件，零测试零校验 |
-| **v1.0.0** | `git checkout v1.0.0` | 工程化版本：MyBatis-Plus 升级，完整 CRUD + 分页搜索，DTO 分层 + 校验 + 全局异常 + SLF4J 日志，Redis 缓存安全序列化，15 个测试，Vue 3 + Element Plus 前端 |
+### v1.0.0（当前版本）
 
-### v0.1.0 → v1.0.0 主要变更
+`git checkout v1.0.0` | [Release](https://github.com/Lotusland-Kioea/user-service-pro/releases/tag/v1.0.0)
 
-| 维度 | v0.1.0 | v1.0.0 |
+首个工程化版本。在 v0.1.0 基础上完成规范化重构和前端搭建。
+
+| 维度 | 内容 |
+|---|---|
+| 文件 | 16 个 Java 源文件 + 2 个测试类 + 13 个前端文件 |
+| ORM | MyBatis-Plus 3.5.7（BaseMapper + 分页 + 逻辑删除 + 自动填充） |
+| API | 5 个（POST/GET/GET{id}/PUT/DELETE）+ 分页搜索 |
+| 分层 | DTO（Create/Update）→ Entity → VO 三层解耦 |
+| 校验 | `@Valid` + Jakarta Bean Validation |
+| 响应 | 统一 `ApiResponse<T>`（code + message + data） |
+| 异常 | `@RestControllerAdvice` + `ResponseEntity` 动态 HTTP 状态码 |
+| 日志 | SLF4J 全覆盖 |
+| 缓存 | `activateDefaultTyping` 类型安全 + 精确驱逐 + `@CachePut` 写入预热 |
+| 测试 | 15 个（7 Service 单测 + 8 Controller MockMvc 集成测试） |
+| 配置 | 多环境 yml（dev）+ `${MYSQL_PASSWORD}` 环境变量 |
+| 前端 | Vue 3 + Element Plus，单页面 CRUD（表格 + 弹窗表单 + 分页） |
+| SQL | OR 条件用 `.and()` 包裹，`@TableLogic` 正确约束 |
+
+**相对 v0.1.0 的 Code Review 修复（12 个问题）：**
+
+| 严重度 | 数量 | 典型问题 |
 |---|---|---|
-| 文件数 | 6 个 Java | 16 个 Java + 2 个测试类 |
-| ORM | 原生 MyBatis 注解 SQL | MyBatis-Plus（BaseMapper + 分页 + 逻辑删除 + 自动填充） |
-| API | 2 个（POST + GET 全量） | 5 个（完整 CRUD + 分页搜索） |
-| 分层 | Entity 直接暴露 | DTO → Entity → VO 三层解耦 |
-| 校验 | 无 | `@Valid` + Jakarta Bean Validation |
-| 响应 | 裸 JSON | 统一 `ApiResponse<T>` 包装 |
-| 异常 | 500 + 堆栈 | `@RestControllerAdvice` + 动态 HTTP 状态码 |
-| 日志 | `System.out.println` | SLF4J 全覆盖 |
-| 缓存 | 忘记调用 `activateDefaultTyping`，反序列化类型丢失 | 已修复类型丢失 + 精确驱逐 + 写入预热 |
-| 测试 | 0 | **15 个**（7 单测 + 8 集成测试） |
-| 配置 | 密码明文硬编码 | 环境变量 + 多环境 yml |
-| 前端 | 无 | Vue 3 + Element Plus |
-| SQL 安全 | OR 条件绕过 `deleted=0` | 已修复（`and()` 包裹） |
+| 🔴 必须修复 | 3 | Redis 序列化类型丢失、OR 条件绕过软删除、`updated_at` 永不更新 |
+| 🟡 应该修复 | 4 | BusinessException HTTP 状态码、缓存名硬编码、`create()` 不预热缓存、死配置 |
+| 🟢 可以优化 | 5 | 死代码清理、依赖冗余、SQL 日志重复、null 守卫 |
 
 ---
 
-## 开发过程日志
+### v0.1.0
+
+`git checkout v0.1.0` | [Release](https://github.com/Lotusland-Kioea/user-service-pro/releases/tag/v0.1.0)
+
+原始极简 Demo，项目起点。
+
+| 维度 | 内容 |
+|---|---|
+| 文件 | 6 个 Java 文件 |
+| ORM | 原生 MyBatis 注解 SQL |
+| API | 2 个（POST 创建 + GET 全量查询） |
+| 分层 | Entity 直接暴露给 API |
+| 校验 | 无 |
+| 响应 | 裸 JSON |
+| 异常 | 默认 500 + 堆栈 |
+| 日志 | `System.out.println` |
+| 缓存 | 未调用 `activateDefaultTyping`，反序列化类型丢失 |
+| 测试 | 0 |
+| 配置 | 密码明文硬编码 |
+| 前端 | 无 |
+
+---
+
+## v1.0.0 开发过程日志
 
 ### 阶段一：项目审查与方案设计
 
@@ -295,7 +328,7 @@ npm run dev       # → http://localhost:5173
 
 ---
 
-## AICoding 技能清单（本次实践）
+## v1.0.0 使用的 AICoding 技能
 
 | 技能 | 使用场景 |
 |---|---|
