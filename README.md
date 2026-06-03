@@ -199,9 +199,16 @@ npm run dev       # → http://localhost:5173
 
 ---
 
-## 与原 Demo 对比
+## 版本记录
 
-| 维度 | 原 Demo (`user-service`) | 进阶版 (`user-service-pro`) |
+| 版本 | Tag | 说明 |
+|---|---|---|
+| **v0.1.0** | `git checkout v0.1.0` | 原始 Demo：Spring Boot + MyBatis + MySQL + Redis，2 个 API（POST/GET），6 个 Java 文件，零测试零校验 |
+| **v1.0.0** | `git checkout v1.0.0` | 工程化版本：MyBatis-Plus 升级，完整 CRUD + 分页搜索，DTO 分层 + 校验 + 全局异常 + SLF4J 日志，Redis 缓存安全序列化，15 个测试，Vue 3 + Element Plus 前端 |
+
+### v0.1.0 → v1.0.0 主要变更
+
+| 维度 | v0.1.0 | v1.0.0 |
 |---|---|---|
 | 文件数 | 6 个 Java | 16 个 Java + 2 个测试类 |
 | ORM | 原生 MyBatis 注解 SQL | MyBatis-Plus（BaseMapper + 分页 + 逻辑删除 + 自动填充） |
@@ -303,8 +310,9 @@ npm run dev       # → http://localhost:5173
 
 ## 后续可扩展方向（未实施）
 
+- [ ] Kafka 消息队列（用户注册事件异步通知）
 - [ ] Spring Security + JWT 认证授权
-- [ ] Docker Compose 一键部署（MySQL + Redis + App）
+- [ ] Docker Compose 一键部署（MySQL + Redis + Kafka + App）
 - [ ] Flyway 数据库迁移管理
 - [ ] MyBatis-Plus 代码生成器（自动生成 Controller/Service/Mapper）
 - [ ] 前端路由 + 多页面（Vue Router）
