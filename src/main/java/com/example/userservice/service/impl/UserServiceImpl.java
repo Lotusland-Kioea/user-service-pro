@@ -7,6 +7,8 @@ import com.example.userservice.common.CacheConstants;
 import com.example.userservice.dto.CreateUserRequest;
 import com.example.userservice.dto.UpdateUserRequest;
 import com.example.userservice.entity.User;
+import com.example.userservice.event.UserEvent;
+import com.example.userservice.event.UserEventType;
 import com.example.userservice.exception.BusinessException;
 import com.example.userservice.mapper.UserMapper;
 import com.example.userservice.service.UserService;
@@ -18,6 +20,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -28,9 +31,11 @@ public class UserServiceImpl implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserMapper userMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, ApplicationEventPublisher eventPublisher) {
         this.userMapper = userMapper;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -45,6 +50,9 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(request, user);
         userMapper.insert(user);
         UserVO result = UserVO.from(user);
+        // 发布用户创建事件 → @TransactionalEventListener 转发到 Kafka
+        eventPublisher.publishEvent(UserEvent.of(UserEventType.CREATED,
+                user.getId(), user.getName(), user.getEmail()));
         log.info("创建用户成功: {}", result);
         return result;
     }
@@ -63,6 +71,9 @@ public class UserServiceImpl implements UserService {
         }
         BeanUtils.copyProperties(request, user);
         userMapper.updateById(user);
+        // 发布用户更新事件 → @TransactionalEventListener 转发到 Kafka
+        eventPublisher.publishEvent(UserEvent.of(UserEventType.UPDATED,
+                user.getId(), user.getName(), user.getEmail()));
         return UserVO.from(user);
     }
 
@@ -79,6 +90,9 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(404, "用户不存在");
         }
         userMapper.deleteById(id);
+        // 发布用户删除事件 → @TransactionalEventListener 转发到 Kafka
+        eventPublisher.publishEvent(UserEvent.of(UserEventType.DELETED,
+                user.getId(), user.getName(), user.getEmail()));
     }
 
     @Override

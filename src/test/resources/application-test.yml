@@ -1,0 +1,28 @@
+# ============================================================
+# 测试环境配置
+# ============================================================
+spring:
+  # 禁用 Kafka 自动配置（单元测试不需要真实 Kafka）
+  # 集成测试通过 @EmbeddedKafka 注解单独启用
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+
+  # H2 内存数据库（测试用）
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+# Kafka 演示配置
+kafka:
+  demo:
+    fail-chance: 0.0
+
+# 日志级别
+logging:
+  level:
+    com.example.userservice: DEBUG
+    org.apache.kafka: WARN
+    org.springframework.kafka: INFO

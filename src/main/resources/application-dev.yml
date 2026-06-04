@@ -14,6 +14,10 @@ spring:
       time-to-live: 60000
       cache-null-values: false
 
+# ———————————— Kafka ————————————
+# Kafka 配置从 application-kafka.yml 加载（通过 spring.profiles.include）
+# 本地需要先启动 Kafka 集群（参见 docs/kafka-setup-windows.md）
+
 # NOTE: useSSL=false 仅用于本地开发环境，生产环境请启用 SSL 并配置证书
 # NOTE: MySQL 密码通过 MYSQL_PASSWORD 环境变量注入，默认值仅用于本地开发
 

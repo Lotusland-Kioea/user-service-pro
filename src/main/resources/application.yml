@@ -6,6 +6,8 @@ spring:
     name: user-service-pro
   profiles:
     active: dev
+    include:
+      - kafka  # 引入 Kafka 配置（application-kafka.yml）
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.userservice.dto.CreateUserRequest;
 import com.example.userservice.dto.UpdateUserRequest;
 import com.example.userservice.entity.User;
+import com.example.userservice.event.UserEvent;
 import com.example.userservice.exception.BusinessException;
 import com.example.userservice.mapper.UserMapper;
 import com.example.userservice.service.impl.UserServiceImpl;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 
@@ -34,6 +36,9 @@ class UserServiceTest {
 
     @Mock
     private UserMapper userMapper;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -66,6 +71,7 @@ class UserServiceTest {
         assertEquals("张三", result.getName());
         assertEquals("zhangsan@example.com", result.getEmail());
         verify(userMapper, times(1)).insert(any(User.class));
+        verify(eventPublisher, times(1)).publishEvent(any(UserEvent.class));
     }
 
     @Test
@@ -105,6 +111,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         verify(userMapper, times(1)).updateById(any(User.class));
+        verify(eventPublisher, times(1)).publishEvent(any(UserEvent.class));
     }
 
     @Test
@@ -128,6 +135,7 @@ class UserServiceTest {
         assertDoesNotThrow(() -> userService.delete(1L));
 
         verify(userMapper, times(1)).deleteById(1L);
+        verify(eventPublisher, times(1)).publishEvent(any(UserEvent.class));
     }
 
     @Test
