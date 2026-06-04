@@ -32,17 +32,25 @@ Spring Boot 3.4.5 + MyBatis-Plus + Redis + Vue 3 用户管理服务，采用 Git
 
 ## 技术栈
 
+<!-- readme-alive:auto:tech-stack -->
+
 | 层级 | 技术 | 版本 |
 |---|---|---|
 | 后端框架 | Spring Boot | 3.4.5 |
 | ORM | MyBatis-Plus | 3.5.7 |
 | 数据库 | MySQL | 8.x |
-| 缓存 | Redis | Windows build |
-| 消息队列 | Apache Kafka | 4.0.2 (KRaft) |
-| 前端 | Vue 3 + Vite | 3.x |
-| UI 库 | Element Plus | latest |
-| HTTP 客户端 | axios | latest |
+| 缓存 | Redis (Spring Cache + Redis) | Windows build |
+| 消息队列 | Apache Kafka (Spring Kafka) | 4.0.2 (KRaft) |
+| 参数校验 | Jakarta Bean Validation | — |
+| 序列化 | Jackson JSR310 (JavaTimeModule) | — |
+| 连接池 | Apache Commons Pool2 | — |
+| 前端 | Vue 3 + Vite | 3.5.34 / Vite 8.0.12 |
+| UI 库 | Element Plus + Icons | 2.14.1 / 2.3.2 |
+| HTTP 客户端 | axios | 1.17.0 |
 | 测试 | JUnit 5 + Mockito + MockMvc + EmbeddedKafka | — |
+| 测试数据库 | H2 (test scope) | — |
+
+<!-- /readme-alive:auto:tech-stack -->
 
 ---
 
@@ -50,7 +58,7 @@ Spring Boot 3.4.5 + MyBatis-Plus + Redis + Vue 3 用户管理服务，采用 Git
 
 | 工具 | 路径 | 版本 |
 |---|---|---|
-| Java | `D:\Develop\Java\jdk-26.0.1+8` | OpenJDK 26 |
+| Java | `D:\Develop\Java\jdk-26.0.1+8` | OpenJDK 26（运行时），项目编译目标 Java 21 |
 | Maven | `D:\Develop\Maven` | — |
 | Node.js | `D:\Develop\Nodejs` | v24.16.0 |
 | MySQL | `D:\Develop\MySQL` | 8.x |
@@ -81,6 +89,8 @@ CREATE TABLE IF NOT EXISTS users (
 ---
 
 ## 项目结构
+
+<!-- readme-alive:auto:project-structure -->
 
 ```
 user-service-pro/
@@ -155,15 +165,19 @@ user-service-pro/
             └── userApi.js                 ← 用户 API 方法
 ```
 
+<!-- /readme-alive:auto:project-structure -->
+
 ---
 
 ## 启动方式
+
+<!-- readme-alive:auto:quick-start -->
 
 ### 后端
 
 **推荐：IntelliJ IDEA**
 
-1. 打开 `E:\Project\user-service-pro`
+1. 打开 `E:\Project\Project1-user-service`
 2. 设置环境变量：Run → Edit Configurations → Environment variables → 添加 `MYSQL_PASSWORD=你的MySQL密码`
 3. 右键 `DemoApplication.java` → Run
 4. 控制台输出：
@@ -180,7 +194,7 @@ user-service-pro/
 
 **命令行：**
 ```bash
-cd E:\Project\user-service-pro
+cd E:\Project\Project1-user-service
 mvn spring-boot:run
 ```
 
@@ -205,9 +219,13 @@ npm run dev       # → http://localhost:5173
 3. 浏览器访问 `http://localhost:5173`
 4. Vite 自动将 `/api` 请求代理到后端
 
+<!-- /readme-alive:auto:quick-start -->
+
 ---
 
 ## API 接口
+
+<!-- readme-alive:auto:api-overview -->
 
 所有接口返回统一格式：
 
@@ -235,6 +253,23 @@ npm run dev       # → http://localhost:5173
 | 400 | 400 | 参数校验失败 / 请求体格式错误 |
 | 404 | 404 | 用户不存在 |
 | 500 | 500 | 系统内部错误 |
+
+### Kafka 实验室（/kafka-lab）
+
+> 独立于业务 CRUD 的 Kafka 学习端点，用于演示各消息模式。
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| `POST` | `/kafka-lab/send` | 异步发送（Fire & Forget） |
+| `POST` | `/kafka-lab/send-sync` | 同步发送（等待确认） |
+| `POST` | `/kafka-lab/send-with-key/{key}` | 指定 Key 发送（分区亲和性） |
+| `POST` | `/kafka-lab/send-batch/{count}` | 批量发送（N 条） |
+| `POST` | `/kafka-lab/send-transactional` | 事务发送（exactly-once） |
+| `POST` | `/kafka-lab/send-error-demo` | 错误重试 + DLT 流程演示 |
+| `GET` | `/kafka-lab/topics` | 查看 Kafka Topic 元数据 |
+| `GET` | `/kafka-lab/metrics` | 查看生产者统计指标 |
+
+<!-- /readme-alive:auto:api-overview -->
 
 ---
 
