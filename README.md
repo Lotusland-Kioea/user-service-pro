@@ -13,11 +13,20 @@ Spring Boot 3.4.5 + MyBatis-Plus + Redis + Vue 3 用户管理服务，采用 Git
 
 ### 学习目标
 
+**工程基础（v1.0.0）**
 - 搭建规范的 Spring Boot 后端工程骨架（分层、校验、异常、日志、测试）
 - 跑通单机 MySQL + Redis 缓存，理解 MyBatis-Plus 的 ORM 能力
 - 搭建 Vue 3 + Element Plus 前端，实现前后端联调
 - 熟悉 Claude Code 开发流程：Plan（方案设计）→ Subagent（并行开发）→ Code Review（审查修复）
 - 实践 Git 版本管理：Tag 归档、多版本共存、云端备份
+
+**消息队列（v1.1.0）**
+- 从零搭建 Apache Kafka 4.0 集群（Windows 原生、KRaft 模式、单机三节点）
+- 理解并实践事件驱动架构：领域事件 → Spring ApplicationEvent → Kafka 异步消息
+- 掌握生产级 Kafka 配置：acks、幂等生产者、事务、手动 ACK、DLT 死信队列
+- 理解 Kafka 高可用原理：副本、ISR、Leader 选举、重平衡，并通过故障演练验证
+- 通过双轨架构（业务集成 + 独立实验室）系统学习 Kafka 各概念
+- 体验 Code Review 驱动的 Bug 修复流程：两轮审查发现 6 个缺陷并全部修复
 
 ---
 
