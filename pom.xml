@@ -13,9 +13,9 @@
 
     <groupId>com.example</groupId>
     <artifactId>user-service-pro</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>user-service-pro</name>
-    <description>用户管理服务 - 工程化进阶版</description>
+    <description>用户管理服务 - Kafka 事件驱动 + 生产级消息队列</description>
 
     <properties>
         <java.version>21</java.version>
